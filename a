@@ -1,0 +1,116 @@
+
+#include <stdio.h>
+#include <stdlib.h>                                 // librerias//
+
+#define NUMESTADOS 51                                   //defino constante * IMPORTANTE: poner un numero mas que en pseudocodigo en tablas.
+
+typedef struct tEstadoClientes {                     //declaro tipo tEstadoClientes//
+    char denominacion[21];                              //Igual que NUMESTADOS, un numero más ya que comienza a contar en 0
+    int numeroClientes;
+}tEstadoClientes;
+
+typedef struct tEstadoClientesContenedor {               //declaro tipo tEstadoClientesContenedor//
+    tEstadoClientes estados[NUMESTADOS];                    //tabla estados del tipo tEstadoClientes
+    int numEstadosGuardados;
+}tEstadoClientesContenedor;
+
+void inicializar_estados(tEstadoClientesContenedor* stds);      //predefino funciones
+void introducir_estado(tEstadoClientesContenedor* stds);
+void modificar_estado(tEstadoClientesContenedor* stds);
+void borrar_estado(tEstadoClientesContenedor* stds);
+void listar_estados(tEstadoClientesContenedor stds);
+int menu();                                                     //predefino accion
+
+
+tEstadoClientesContenedor stds;                                      //declaro variables antes de la funcion principal, para que sirvan en todo el codigo
+int o;
+
+
+int main() {                                                        //funcion principal
+   
+    inicializar_estados(&stds);                                      //funcion inicializar_estados
+    o=menu();                                                        //funcion menu
+    while (o >= 1 && o <= 4) {                                         //creo un bucle
+        if (o == 1) {                                                //condición de o igual a 1
+            introducir_estado(&stds);
+        }
+        if (o == 2) {
+            modificar_estado(&stds);                                //condición de o igual a 2
+        }
+        if (o == 3) {
+            borrar_estado(&stds);                                   //condición de o igual a 3
+        }
+        if (o == 4) {
+            listar_estados(stds);                                   //condición de o igual a 4
+        }
+        o=menu();
+    }
+    system("PAUSE"); 
+    return o;                                                       //retorna la seleccion de O
+}
+void inicializar_estados(tEstadoClientesContenedor* stds) {         //funcion inicializar_estados
+    (*stds).numEstadosGuardados = 0;    
+}
+int menu() {                                                                //accion menu
+    int opcion;
+    printf("***************************** ");
+    printf("Teclea el numero de la opcion escogida o cualquier otro numero para salir: \n");
+    printf("1. Introducir estado y numero de clientes. \n");
+    printf("2. Modificar estado o clientes. \n" );
+    printf("3. Borrar estado y clientes. \n");
+    printf("4. Listar estados. \n");
+    printf("**************************************************************** ");
+    scanf("%d", &opcion);
+    return opcion;                                                          //retorna opcion seleccionada
+}
+
+void introducir_estado(tEstadoClientesContenedor* stds) {                   //funcion introducir_estado
+    if ((*stds).numEstadosGuardados <= NUMESTADOS) {                        //Pongo NUMESTADOS, ya que 51 da fallo
+        tEstadoClientes std;
+        
+        printf("Teclea el nombre del estado: \n");
+        scanf("%s", &std.denominacion);
+
+        printf("Teclee el numero de clientes: \n");
+        scanf("%d", &std.numeroClientes);
+ 
+
+        (*stds).estados[(*stds).numEstadosGuardados] = std;
+        (*stds).numEstadosGuardados = (*stds).numEstadosGuardados + 1;
+    }
+}
+
+void modificar_estado(tEstadoClientesContenedor* stds) {                            //funcion modificar_estado
+    int numero;
+    printf("Teclea el numero del estado a modificar a partir del orden de presentacion de estos ");
+    scanf("%d", &numero);
+    printf("Teclea el nuevo nombre del estado ");
+    scanf("%s", &stds->estados[numero-1].denominacion);                             //le restamos uno para que lo modifique
+    printf("Teclea el nuevo numero de clientes ");
+    scanf("%d", &stds->estados[numero-1].numeroClientes);
+}
+
+void borrar_estado(tEstadoClientesContenedor* stds) {                               //funcion borrar_estado
+    int numero;
+    printf("Teclea el numero del estado a borrar a partir del orden de presentacion de estos ");
+    scanf("%d", &numero);
+    if (numero <= (*stds).numEstadosGuardados && numero > 0) {
+        numero = numero -1 ;
+        while (numero <= (*stds).numEstadosGuardados) {
+            (*stds).estados[numero] = (*stds).estados[numero + 1];
+            numero = numero + 1;
+        }
+        (*stds).numEstadosGuardados = (*stds).numEstadosGuardados - 1;
+    }
+}
+
+void listar_estados(tEstadoClientesContenedor stds) {                               //funcion listar_estados
+    int i;
+    for (i = 0; i < stds.numEstadosGuardados; i++) {                                //IMPORTANTE: inicializar desde 0
+        printf("Nombre:%s ", stds.estados[i].denominacion);
+        printf("Numero de clientes: %d\n", stds.estados[i].numeroClientes);
+
+    }
+     system("PAUSE");                                                               //le pauso una tecla, porque sino cuesta de leer el listado
+}
+
